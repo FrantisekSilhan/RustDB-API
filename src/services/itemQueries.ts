@@ -13,7 +13,7 @@ export const itemSelect = {
   class_id: schema.itemMetadata.class_id,
 };
 
-export const baseitemQuery = (db
+export const baseitemQuery = () => (db
   .select(itemSelect)
   .from(schema.itemMetadata)
   .innerJoin(
@@ -23,7 +23,7 @@ export const baseitemQuery = (db
   .$dynamic()
 );
 
-export type BaseItemQuery = typeof baseitemQuery._.result[0];
+export type BaseItemQuery = ReturnType<typeof baseitemQuery>["_"]["result"][0];
 
 export interface FormattedItemResponse extends BaseItemQuery {
   full_icon_url: string | null;
@@ -62,7 +62,7 @@ export const formatItemResponse = (item: BaseItemQuery): FormattedItemResponse =
   };
 };
 
-export const getItem = async (query: typeof baseitemQuery): Promise<FormattedItemResponse | null> => {
+export const getItem = async (query: ReturnType<typeof baseitemQuery>): Promise<FormattedItemResponse | null> => {
   const item = (await query.limit(1))[0];
   if (!item) return null;
 

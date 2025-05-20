@@ -10,7 +10,7 @@ export const itemService = {
   }) {
     const offset = (page - 1) * limit;
 
-    let query = baseitemQuery;
+    let query = baseitemQuery();
 
     if (search) {
       query = withLike(query, search);
@@ -44,15 +44,15 @@ export const itemService = {
   },
 
   async getItemByClassId({class_id}: {class_id: number}) {
-    return await getItem(byClassId(baseitemQuery, class_id));
+    return await getItem(byClassId(baseitemQuery(), class_id));
   },
 
   async getItemById({ item_id }: { item_id: number }) {
-    return await getItem(byItemId(baseitemQuery, item_id));
+    return await getItem(byItemId(baseitemQuery(), item_id));
   },
 
   async getItemByName({ name }: { name: string }) {
-    return await getItem(byName(baseitemQuery, name));
+    return await getItem(byName(baseitemQuery(), name));
   },
 
   async getItemPriceHistoryByClassId({class_id, days}: {class_id: number, days: number}) {
