@@ -25,7 +25,7 @@ export const itemService = {
       .select({ count: count() })
       .from(schema.item)
       .where(
-        search ? like(schema.item.name, `%${search}%`)
+        search ? like(schema.lower(schema.item.name), `%${search.toLowerCase()}%`)
           : undefined
       );
 

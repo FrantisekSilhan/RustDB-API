@@ -10,7 +10,7 @@ export const itemController = {
     const result = await itemService.getAllItems({
       page,
       limit,
-      search,
+      search: search === "" ? undefined : search,
     });
 
     res.json(result);

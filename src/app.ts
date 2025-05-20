@@ -10,13 +10,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/health", (req, res) => {
+app.get("/health", (_, res) => {
   res.status(200).json({ message: "OK", timestamp: new Date().toISOString() });
 });
 
 app.use("/api/v1/items", itemRoutes);
 
-app.use((req, res) => {
+app.use((_, res) => {
   res.status(404).json({ message: "Not found" });
 });
 

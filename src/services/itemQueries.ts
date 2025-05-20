@@ -31,7 +31,7 @@ export interface FormattedItemResponse extends BaseItemQuery {
 
 export const withLike = <T extends PgSelect>(query: T, search: string) => {
   return query.where(
-    like(schema.item.name, `%${search}%`)
+    like(schema.lower(schema.item.name), `%${search.toLowerCase()}%`)
   );
 };
 
