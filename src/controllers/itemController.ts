@@ -99,4 +99,46 @@ export const itemController = {
 
     res.json(result);
   },
+
+  async getItemOrderBookByClassId(req: Request, res: Response, _: NextFunction) {
+    const class_id = Number(req.params.class_id);
+    if (isNaN(class_id)) {
+      return res.status(400).json({ error: "Invalid class_id" });
+    }
+
+    const result = await itemService.getItemOrderBookByClassId({ class_id });
+    if (!result) {
+      return res.status(404).json({ error: "Item not found" });
+    }
+
+    res.json(result);
+  },
+
+  async getItemOrderBookById(req: Request, res: Response, _: NextFunction) {
+    const item_id = Number(req.params.item_id);
+    if (isNaN(item_id)) {
+      return res.status(400).json({ error: "Invalid item_id" });
+    }
+
+    const result = await itemService.getItemOrderBookById({ item_id });
+    if (!result) {
+      return res.status(404).json({ error: "Item not found" });
+    }
+
+    res.json(result);
+  },
+
+  async getItemOrderBookByName(req: Request, res: Response, _: NextFunction) {
+    const name = req.params.name;
+    if (!name) {
+      return res.status(400).json({ error: "Invalid name" });
+    }
+
+    const result = await itemService.getItemOrderBookByName({ name });
+    if (!result) {
+      return res.status(404).json({ error: "Item not found" });
+    }
+
+    res.json(result);
+  },
 };

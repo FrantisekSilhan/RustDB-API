@@ -2,7 +2,7 @@ import { db, schema } from "@/db";
 import { count, desc, like } from "drizzle-orm";
 import { formatItemResponse, getItem, baseitemQuery } from "./itemQueries";
 import { byClassId, byItemId, byName, withLike } from "@/utils/queries";
-import { baseSnapshotQuery, getSnapshot } from "./snapshotQueries";
+import { baseSnapshotQuery, getOrders, getSnapshot } from "./snapshotQueries";
 
 export const itemService = {
   async getAllItems({ page = 1, limit = 20, search }: {
@@ -63,5 +63,48 @@ export const itemService = {
   },
   async getItemSnapshotByName({ name }: { name: string }) {
     return await getSnapshot(byName(baseSnapshotQuery(), name));
+  },
+
+  async getItemOrderBookByClassId({ class_id }: { class_id: number }) {
+    const snapshot = await this.getItemSnapshotByClassId({ class_id });
+    if (!snapshot) return null;
+
+    const sellOrders = await getOrders(snapshot.snapshot_id, "sell");
+    const buyOrders = await getOrders(snapshot.snapshot_id, "buy");
+
+    return {
+      snapshot_id: snapshot.snapshot_id,
+      fetched_at: snapshot.fetched_at,
+      total_sell_requests: snapshot.total_sell_requests,
+      total_buy_requests: snapshot.total_buy_requests,
+      sellOrders,
+      buyOrders,
+    };
+  },
+  async getItemOrderBookById({ item_id }: { item_id: number }) {
+    const snapshot = await this.getItemSnapshotById({ item_id });
+    if (!snapshot) return null;
+
+    const sellOrders = await getOrders(snapshot.snapshot_id, "sell");
+    const buyOrders = await getOrders(snapshot.snapshot_id, "buy");
+
+    return {
+      snapshot,
+      sellOrders,
+      buyOrders,
+    };
+  },
+  async getItemOrderBookByName({ name }: { name: string }) {
+    const snapshot = await this.getItemSnapshotByName({ name });
+    if (!snapshot) return null;
+
+    const sellOrders = await getOrders(snapshot.snapshot_id, "sell");
+    const buyOrders = await getOrders(snapshot.snapshot_id, "buy");
+
+    return {
+      snapshot,
+      sellOrders,
+      buyOrders,
+    };
   },
 };

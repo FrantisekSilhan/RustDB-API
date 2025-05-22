@@ -89,6 +89,55 @@ Get the most recent snapshot metadata for an item by any of its identifiers.
 
 ---
 
+### **Get Latest Order Book for an Item**
+
+Get the most recent order book (buy and sell orders, including cumulative quantities) for an item, using any of its identifiers.
+
+#### **GET `/api/v1/items/item-id/:item_id/orderbook`**
+
+#### **GET `/api/v1/items/class-id/:class_id/orderbook`**
+
+#### **GET `/api/v1/items/name/:name/orderbook`**
+
+**Response:**
+```json
+{
+  "snapshot_id": 123,
+  "fetched_at": "2024-05-22T12:00:00.000Z",
+  "total_sell_requests": 2,
+  "total_buy_requests": 7,
+  "sell_orders": [
+    {
+      "price": 1622,
+      "quantity": 1,
+      "cumulative_quantity": 1
+    },
+    {
+      "price": 1624,
+      "quantity": 1,
+      "cumulative_quantity": 2
+    }
+    // ...
+  ],
+  "buy_orders": [
+    {
+      "price": 1366,
+      "quantity": 6,
+      "cumulative_quantity": 6
+    },
+    {
+      "price": 1325,
+      "quantity": 1,
+      "cumulative_quantity": 7
+    }
+    // ...
+  ]
+}
+```
+
+---
+
+
 ### **Snapshots**
 
 #### **GET `/api/v1/snapshots/:snapshot_id`**

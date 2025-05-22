@@ -17,4 +17,8 @@ itemRoutes.get("/item-id/:item_id/snapshot", itemDetailLimiter, asyncHandler(ite
 itemRoutes.get("/class-id/:class_id/snapshot", itemDetailLimiter, asyncHandler(itemController.getItemSnapshotByClassId));
 itemRoutes.get("/name/:name/snapshot", itemDetailLimiter, asyncHandler(itemController.getItemSnapshotByName));
 
+itemRoutes.get("/item-id/:item_id/orderbook", itemDetailLimiter, asyncHandler(itemController.getItemOrderBookById));
+itemRoutes.get("/class-id/:class_id/orderbook", itemDetailLimiter, asyncHandler(itemController.getItemOrderBookByClassId));
+itemRoutes.get("/name/:name/orderbook", itemDetailLimiter, asyncHandler(itemController.getItemOrderBookByName));
+
 export default itemRoutes;
