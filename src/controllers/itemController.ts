@@ -57,4 +57,46 @@ export const itemController = {
 
     res.json(result);
   },
+
+  async getItemSnapshotById(req: Request, res: Response, _: NextFunction) {
+    const item_id = Number(req.params.item_id);
+    if (isNaN(item_id)) {
+      return res.status(400).json({ error: "Invalid item_id" });
+    }
+
+    const result = await itemService.getItemSnapshotById({ item_id });
+    if (!result) {
+      return res.status(404).json({ error: "Item not found" });
+    }
+
+    res.json(result);
+  },
+
+  async getItemSnapshotByClassId(req: Request, res: Response, _: NextFunction) {
+    const class_id = Number(req.params.class_id);
+    if (isNaN(class_id)) {
+      return res.status(400).json({ error: "Invalid class_id" });
+    }
+
+    const result = await itemService.getItemSnapshotByClassId({ class_id });
+    if (!result) {
+      return res.status(404).json({ error: "Item not found" });
+    }
+
+    res.json(result);
+  },
+
+  async getItemSnapshotByName(req: Request, res: Response, _: NextFunction) {
+    const name = req.params.name;
+    if (!name) {
+      return res.status(400).json({ error: "Invalid name" });
+    }
+
+    const result = await itemService.getItemSnapshotByName({ name });
+    if (!result) {
+      return res.status(404).json({ error: "Item not found" });
+    }
+
+    res.json(result);
+  },
 };

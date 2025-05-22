@@ -1,15 +1,160 @@
-# rustdb-api
+# Rust Item Market API
 
-To install dependencies:
+A public API for Rust game items, providing historical Steam Marketplace data, order books, and item metadata.  
+All endpoints are under `/api/v1/`.
 
-```bash
-bun install
+---
+
+## **Endpoints**
+
+---
+
+### **Items**
+
+#### **GET `/api/v1/items`**
+
+List all items, with pagination and optional search.
+
+**Query Parameters:**
+- `page` (number, optional, default: 1)
+- `limit` (number, optional, default: 20, max: 250)
+- `search` (string, optional) — search by item name
+
+**Response:**
+```json
+{
+  "items": [
+    {
+      "name": "Item Name",
+      "item_id": 123456789,
+      "added_at": "2024-05-22T12:00:00.000Z",
+      "background_color": "000000",
+      "icon_url": "icon_id",
+      "class_id": 987654321,
+      "full_icon_url": "https://community.fastly.steamstatic.com/economy/image/icon_id"
+    }
+    // ...
+  ],
+  "pagination": {
+    "total": 123,
+    "pages": 7,
+    "page": 1,
+    "limit": 20
+  }
+}
 ```
 
-To run:
+---
 
-```bash
-bun run src/app.ts
+#### **GET `/api/v1/items/item-id/:item_id`**
+
+#### **GET `/api/v1/items/class-id/:class_id`**
+
+#### **GET `/api/v1/items/name/:name`**
+
+**Response:**
+```json
+{
+  "name": "Item Name",
+  "item_id": 123456789,
+  "added_at": "2024-05-22T12:00:00.000Z",
+  "background_color": "000000",
+  "icon_url": "icon_id",
+  "class_id": 987654321,
+  "full_icon_url": "https://community.fastly.steamstatic.com/economy/image/icon_id"
+}
 ```
 
-This project was created using `bun init` in bun v1.1.24. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+---
+
+### **Get Latest Snapshot for an Item**
+
+Get the most recent snapshot metadata for an item by any of its identifiers.
+
+#### **GET `/api/v1/items/item-id/:item_id/snapshot`**
+
+#### **GET `/api/v1/items/class-id/:class_id/snapshot`**
+
+#### **GET `/api/v1/items/name/:name/snapshot`**
+
+**Response:**
+```json
+{
+  "snapshot_id": 123,
+  "fetched_at": "2024-05-22T12:00:00.000Z",
+  "total_sell_requests": 19,
+  "total_buy_requests": 274
+}
+```
+
+---
+
+### **Snapshots**
+
+#### **GET `/api/v1/snapshots/:snapshot_id`**
+
+Get the order book (buy and sell orders) for a specific snapshot.
+
+**Response:**
+```json
+{
+  "sell_orders": [
+    {
+      "price": 1622,
+      "quantity": 1,
+      "cumulative_quantity": 1
+    },
+    {
+      "price": 1624,
+      "quantity": 1,
+      "cumulative_quantity": 2
+    }
+    // ...
+  ],
+  "buy_orders": [
+    {
+      "price": 1366,
+      "quantity": 6,
+      "cumulative_quantity": 6
+    },
+    {
+      "price": 1325,
+      "quantity": 1,
+      "cumulative_quantity": 7
+    }
+    // ...
+  ]
+}
+```
+
+---
+
+## **ID Reference**
+
+- **item_id**: Steam's unique item ID (requires scraping to obtain from Steam)
+- **class_id**: Steam's class ID (available from Steam API)
+- **name**: Item name (unique)
+
+---
+
+## **Notes**
+
+- All prices are in the smallest currency unit (e.g., cents).
+- All endpoints return data in JSON.
+- Pagination is available for item lists.
+- Snapshots represent the state of the order book at a specific time.
+
+---
+
+## **Planned/Upcoming Endpoints**
+
+- List all snapshots for an item
+- Get price history for an item
+
+---
+
+## **Questions or Feedback**
+
+If you have questions, suggestions, or want to see more features, feel free to reach out!  
+
+Enjoy exploring the data!

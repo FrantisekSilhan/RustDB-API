@@ -1,5 +1,4 @@
-import { eq, like } from "drizzle-orm";
-import type { PgSelect } from "drizzle-orm/pg-core";
+import { eq } from "drizzle-orm";
 import { schema, db } from "@/db";
 
 export const itemUrl = "https://community.fastly.steamstatic.com/economy/image/";
@@ -29,36 +28,10 @@ export interface FormattedItemResponse extends BaseItemQuery {
   full_icon_url: string | null;
 };
 
-export const withLike = <T extends PgSelect>(query: T, search: string) => {
-  return query.where(
-    like(schema.lower(schema.item.name), `%${search.toLowerCase()}%`)
-  );
-};
-
-export const byClassId = <T extends PgSelect>(query: T, class_id: number) => {
-  return query.where(
-    eq(schema.itemMetadata.class_id, class_id)
-  );
-};
-
-export const byItemId = <T extends PgSelect>(query: T, item_id: number) => {
-  return query.where(
-    eq(schema.item.item_id, item_id)
-  );
-};
-
-export const byName = <T extends PgSelect>(query: T, name: string) => {
-  return query.where(
-    eq(schema.lower(schema.item.name), name.toLowerCase())
-  );
-};
-
 export const formatItemResponse = (item: BaseItemQuery): FormattedItemResponse => {
   return {
     ...item,
-    full_icon_url: item.icon_url
-      ? `${itemUrl}${item.icon_url}`
-      : null,
+    full_icon_url: `${itemUrl}${item.icon_url}`,
   };
 };
 

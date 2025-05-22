@@ -2,6 +2,7 @@ import express, { type NextFunction, type Request, type Response } from "express
 import cors from "cors";
 import helmet from "helmet";
 import itemRoutes from "./routes/itemRoutes";
+import snapshotRoutes from "./routes/snapshotRoutes";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.get("/health", (_, res) => {
 });
 
 app.use("/api/v1/items", itemRoutes);
+app.use("/api/v1/snapshots", snapshotRoutes);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Not found" });

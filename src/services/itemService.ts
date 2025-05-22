@@ -1,6 +1,8 @@
 import { db, schema } from "@/db";
 import { count, desc, like } from "drizzle-orm";
-import { byClassId, byItemId, byName, formatItemResponse, getItem, baseitemQuery, withLike } from "./itemQueries";
+import { formatItemResponse, getItem, baseitemQuery } from "./itemQueries";
+import { byClassId, byItemId, byName, withLike } from "@/utils/queries";
+import { baseSnapshotQuery, getSnapshot } from "./snapshotQueries";
 
 export const itemService = {
   async getAllItems({ page = 1, limit = 20, search }: {
@@ -46,25 +48,20 @@ export const itemService = {
   async getItemByClassId({class_id}: {class_id: number}) {
     return await getItem(byClassId(baseitemQuery(), class_id));
   },
-
   async getItemById({ item_id }: { item_id: number }) {
     return await getItem(byItemId(baseitemQuery(), item_id));
   },
-
   async getItemByName({ name }: { name: string }) {
     return await getItem(byName(baseitemQuery(), name));
   },
 
-  async getItemPriceHistoryByClassId({class_id, days}: {class_id: number, days: number}) {
-    const daysAgo = new Date();
-    daysAgo.setDate(daysAgo.getDate() - days);
-
-    const snapshots = await db
-      .select({
-        snapshot_id: schema.itemSnapshot.snapshot_id,
-        fetched_at: schema.itemSnapshot.fetched_at,
-        total_sell_requests: schema.itemSnapshot.total_sell_requests,
-        total_buy_requests: schema.itemSnapshot.total_buy_requests,
-      })
+  async getItemSnapshotByClassId({ class_id }: { class_id: number }) {
+    return await getSnapshot(byClassId(baseSnapshotQuery(), class_id));
+  },
+  async getItemSnapshotById({ item_id }: { item_id: number }) {
+    return await getSnapshot(byItemId(baseSnapshotQuery(), item_id));
+  },
+  async getItemSnapshotByName({ name }: { name: string }) {
+    return await getSnapshot(byName(baseSnapshotQuery(), name));
   },
 };

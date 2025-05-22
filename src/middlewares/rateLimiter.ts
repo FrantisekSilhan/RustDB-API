@@ -8,6 +8,7 @@ export const itemListLimiter = rateLimit({
   handler: (_, res) => {
     res.status(429).json({
       message: "Too many requests, please try again later.",
+      limiter: "itemList",
       status: 429,
     });
   },
@@ -15,12 +16,27 @@ export const itemListLimiter = rateLimit({
 
 export const itemDetailLimiter = rateLimit({
   windowMs: 10 * 1000, // 10 seconds
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: true,
+  handler: (_, res) => {
+    res.status(429).json({
+      message: "Too many requests, please try again later.",
+      limiter: "itemDetail",
+      status: 429,
+    });
+  },
+});
+
+export const snapshotLimiter = rateLimit({
+  windowMs: 10 * 1000, // 10 seconds
   max: 50,
   standardHeaders: true,
   legacyHeaders: true,
   handler: (_, res) => {
     res.status(429).json({
       message: "Too many requests, please try again later.",
+      limiter: "snapshot",
       status: 429,
     });
   },
