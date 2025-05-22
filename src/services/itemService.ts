@@ -109,8 +109,8 @@ export const itemService = {
       fetched_at: snapshot.fetched_at,
       total_sell_requests: snapshot.total_sell_requests,
       total_buy_requests: snapshot.total_buy_requests,
-      sellOrders,
-      buyOrders,
+      sell_orders: sellOrders,
+      buy_orders: buyOrders,
     };
   },
 };
