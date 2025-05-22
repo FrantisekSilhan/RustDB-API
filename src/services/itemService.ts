@@ -89,7 +89,10 @@ export const itemService = {
     const buyOrders = await getOrders(snapshot.snapshot_id, "buy");
 
     return {
-      snapshot,
+      snapshot_id: snapshot.snapshot_id,
+      fetched_at: snapshot.fetched_at,
+      total_sell_requests: snapshot.total_sell_requests,
+      total_buy_requests: snapshot.total_buy_requests,
       sellOrders,
       buyOrders,
     };
@@ -102,7 +105,10 @@ export const itemService = {
     const buyOrders = await getOrders(snapshot.snapshot_id, "buy");
 
     return {
-      snapshot,
+      snapshot_id: snapshot.snapshot_id,
+      fetched_at: snapshot.fetched_at,
+      total_sell_requests: snapshot.total_sell_requests,
+      total_buy_requests: snapshot.total_buy_requests,
       sellOrders,
       buyOrders,
     };
