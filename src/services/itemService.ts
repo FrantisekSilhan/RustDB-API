@@ -1,5 +1,5 @@
 import { db, schema } from "@/db";
-import { count, desc, eq, like } from "drizzle-orm";
+import { count, desc, eq, gt, like } from "drizzle-orm";
 import { formatItemResponse, getItem, baseitemQuery } from "./itemQueries";
 import { byClassId, byItemId, byName, withLike } from "@/utils/queries";
 import { baseSnapshotQuery, getOrders, getSnapshot } from "./snapshotQueries";
@@ -185,7 +185,7 @@ export const itemService = {
         eq(schema.itemMetadata.item_internal_id, schema.item.internal_id)
       )
       .where(
-        eq(schema.item.added_at, last_item)
+        gt(schema.item.added_at, last_item)
       )
       .orderBy(desc(schema.item.added_at));
 
