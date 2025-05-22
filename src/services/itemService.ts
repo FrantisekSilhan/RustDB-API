@@ -1,5 +1,5 @@
 import { db, schema } from "@/db";
-import { count, desc, like } from "drizzle-orm";
+import { count, desc, eq, like } from "drizzle-orm";
 import { formatItemResponse, getItem, baseitemQuery } from "./itemQueries";
 import { byClassId, byItemId, byName, withLike } from "@/utils/queries";
 import { baseSnapshotQuery, getOrders, getSnapshot } from "./snapshotQueries";
@@ -120,8 +120,92 @@ export const itemService = {
       .limit(limit);
 
     const items = await query;
-    if (!items) return null;
+    if (!items.length) return null;
 
     return items.map((item) => formatItemResponse(item));
   },
+
+  async getItemsMinimal() {
+    const items = await db
+      .select({
+        name: schema.item.name,
+        icon_url: schema.itemMetadata.icon_url,
+      })
+      .from(schema.item)
+      .innerJoin(
+        schema.itemMetadata,
+        eq(schema.itemMetadata.item_internal_id, schema.item.internal_id)
+      )
+      .orderBy(desc(schema.item.added_at));
+
+    const lastItem = (await db
+      .select({
+        added_at: schema.item.added_at,
+      })
+      .from(schema.item)
+      .orderBy(desc(schema.item.added_at))
+      .limit(1))[0];
+    
+    if (!items.length || !lastItem) return null;
+
+    return {
+      last_item: lastItem.added_at,
+      items: items.map((item) => ({
+        name: item.name,
+        icon: item.icon_url,
+      }))
+    };
+  },
+
+  async getItemsMinimalLast() {
+    const lastItem = (await db
+      .select({
+        added_at: schema.item.added_at,
+      })
+      .from(schema.item)
+      .orderBy(desc(schema.item.added_at))
+      .limit(1))[0];
+
+    if (!lastItem) return null;
+
+    return {
+      last_item: lastItem.added_at,
+    };
+  },
+
+  async getItemsMinimalDiff({ last_item }: { last_item: Date }) {
+    const items = await db
+      .select({
+        name: schema.item.name,
+        icon_url: schema.itemMetadata.icon_url,
+      })
+      .from(schema.item)
+      .innerJoin(
+        schema.itemMetadata,
+        eq(schema.itemMetadata.item_internal_id, schema.item.internal_id)
+      )
+      .where(
+        eq(schema.item.added_at, last_item)
+      )
+      .orderBy(desc(schema.item.added_at));
+
+    const lastItem = (await db
+      .select({
+        added_at: schema.item.added_at,
+      })
+      .from(schema.item)
+      .orderBy(desc(schema.item.added_at))
+      .limit(1))[0];
+
+    if (!items.length || !lastItem) return null;
+
+    return {
+      from: last_item,
+      to: lastItem.added_at,
+      items: items.map((item) => ({
+        name: item.name,
+        icon: item.icon_url,
+      }))
+    };
+  }
 };

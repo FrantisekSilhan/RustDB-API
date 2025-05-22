@@ -1,7 +1,7 @@
 import { itemController } from "@/controllers/itemController";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { Router } from "express";
-import { itemListLimiter, itemDetailLimiter } from "@/middlewares/rateLimiter";
+import { itemListLimiter, itemDetailLimiter, minimalLimiter } from "@/middlewares/rateLimiter";
 
 const itemRoutes = Router();
 
@@ -22,5 +22,9 @@ itemRoutes.get("/class-id/:class_id/orderbook", itemDetailLimiter, asyncHandler(
 itemRoutes.get("/name/:name/orderbook", itemDetailLimiter, asyncHandler(itemController.getItemOrderBookByName));
 
 itemRoutes.get("/recent", itemDetailLimiter, asyncHandler(itemController.getRecentItems));
+
+itemRoutes.get("/minimal", minimalLimiter, asyncHandler(itemController.getItemsMinimal));
+itemRoutes.get("/minimal/last", itemDetailLimiter, asyncHandler(itemController.getItemsMinimalLast));
+itemRoutes.get("/minimal/diff", minimalLimiter, asyncHandler(itemController.getItemsMinimalDiff));
 
 export default itemRoutes;

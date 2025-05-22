@@ -41,3 +41,17 @@ export const snapshotLimiter = rateLimit({
     });
   },
 });
+
+export const minimalLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: true,
+  handler: (_, res) => {
+    res.status(429).json({
+      message: "Too many requests, please try again later.",
+      limiter: "minimal",
+      status: 429,
+    });
+  },
+});

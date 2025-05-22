@@ -96,6 +96,63 @@ Get metadata for a specific item by its identifier.
 
 ---
 
+### **Minimal Items Endpoints**
+
+Endpoints for efficient client-side search, preview, and incremental updates.
+
+#### **GET `/api/v1/items/minimal`**
+
+Returns a minimal list of all items, suitable for client-side search and preview.
+
+**Response:**
+```json
+{
+  "last_item": "2024-05-22T12:00:00.000Z",
+  "items": [
+    { "name": "Item 1", "icon": "icon_1" },
+    { "name": "Item 2", "icon": "icon_2" }
+    // ...
+  ]
+}
+```
+
+---
+
+#### **GET `/api/v1/items/minimal/last`**
+
+Returns only the timestamp of the most recently added item.
+
+**Response:**
+```json
+{
+  "last_item": "2024-05-22T12:00:00.000Z"
+}
+```
+
+---
+
+#### **GET `/api/v1/items/minimal/diff`**
+
+Returns only the items added from the last date (for incremental updates).
+
+**Query Parameters:**
+- `from` (ISO date string, required): The timestamp of the last item the client has.
+
+**Response:**
+```json
+{
+  "from": "2024-05-01T00:00:00.000Z",
+  "to": "2024-05-22T12:00:00.000Z",
+  "items": [
+    { "name": "New Item 1", "icon": "icon_123" },
+    { "name": "New Item 2", "icon": "icon_456" }
+    // ...
+  ]
+}
+```
+
+---
+
 ### **Get Latest Snapshot for an Item**
 
 Get the most recent snapshot metadata for an item by any of its identifiers.

@@ -157,4 +157,38 @@ export const itemController = {
 
     res.json(result);
   },
+
+  async getItemsMinimal(_: Request, res: Response, __: NextFunction) {
+    const result = await itemService.getItemsMinimal();
+    if (!result) {
+      return res.status(404).json({ error: "Items not found" });
+    }
+
+    res.json(result);
+  },
+
+  async getItemsMinimalLast(_: Request, res: Response, __: NextFunction) {
+    const result = await itemService.getItemsMinimalLast();
+    if (!result) {
+      return res.status(404).json({ error: "Items not found" });
+    }
+
+    res.json(result);
+  },
+
+  async getItemsMinimalDiff(req: Request, res: Response, _: NextFunction) {
+    const from = req.query.from as string | undefined;
+
+    if (!from || isNaN(new Date(from).getTime())) {
+      return res.status(400).json({ error: "Invalid from" });
+    }
+
+    const result = await itemService.getItemsMinimalDiff({ last_item: new Date(from) });
+
+    if (!result) {
+      return res.status(404).json({ error: "Items not found" });
+    }
+
+    res.json(result);
+  },
 };
