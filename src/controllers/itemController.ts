@@ -183,7 +183,7 @@ export const itemController = {
       return res.status(400).json({ error: "Invalid from" });
     }
 
-    const result = await itemService.getItemsMinimalDiff({ last_item: new Date(from) });
+    const result = await itemService.getItemsMinimalDiff({ last_item: from });
 
     if (!result) {
       return res.status(404).json({ error: "Items not found" });

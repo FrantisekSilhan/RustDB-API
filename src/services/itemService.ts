@@ -1,5 +1,5 @@
 import { db, schema } from "@/db";
-import { count, desc, eq, gt, like } from "drizzle-orm";
+import { count, desc, eq, gt, like, sql } from "drizzle-orm";
 import { formatItemResponse, getItem, baseitemQuery } from "./itemQueries";
 import { byClassId, byItemId, byName, withLike } from "@/utils/queries";
 import { baseSnapshotQuery, getOrders, getSnapshot } from "./snapshotQueries";
@@ -140,7 +140,7 @@ export const itemService = {
 
     const lastItem = (await db
       .select({
-        added_at: schema.item.added_at,
+        added_at: sql`added_at::text`,
       })
       .from(schema.item)
       .orderBy(desc(schema.item.added_at))
@@ -160,7 +160,7 @@ export const itemService = {
   async getItemsMinimalLast() {
     const lastItem = (await db
       .select({
-        added_at: schema.item.added_at,
+        added_at: sql`added_at::text`,
       })
       .from(schema.item)
       .orderBy(desc(schema.item.added_at))
@@ -173,7 +173,7 @@ export const itemService = {
     };
   },
 
-  async getItemsMinimalDiff({ last_item }: { last_item: Date }) {
+  async getItemsMinimalDiff({ last_item }: { last_item: string }) {
     const items = await db
       .select({
         name: schema.item.name,
@@ -185,13 +185,13 @@ export const itemService = {
         eq(schema.itemMetadata.item_internal_id, schema.item.internal_id)
       )
       .where(
-        gt(schema.item.added_at, last_item)
+        sql`${schema.item.added_at} > ${last_item}::timestamp`
       )
       .orderBy(desc(schema.item.added_at));
 
     const lastItem = (await db
       .select({
-        added_at: schema.item.added_at,
+        added_at: sql`added_at::text`,
       })
       .from(schema.item)
       .orderBy(desc(schema.item.added_at))
