@@ -15,6 +15,10 @@ export const baseSnapshotQuery = () => (db
     schema.item,
     eq(schema.itemSnapshot.item_internal_id, schema.item.internal_id)
   )
+  .innerJoin(
+    schema.itemMetadata,
+    eq(schema.item.internal_id, schema.itemMetadata.item_internal_id)
+  )
   .$dynamic()
 );
 
