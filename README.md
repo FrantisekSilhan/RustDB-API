@@ -107,7 +107,7 @@ Returns a minimal list of all items, suitable for client-side search and preview
 **Response:**
 ```json
 {
-  "last_item": "2024-05-22T12:00:00.000Z",
+  "last_item": "2024-05-22T12:00:00.00000Z",
   "items": [
     { "name": "Item 1", "icon": "icon_1" },
     { "name": "Item 2", "icon": "icon_2" }
@@ -125,7 +125,7 @@ Returns only the timestamp of the most recently added item.
 **Response:**
 ```json
 {
-  "last_item": "2024-05-22T12:00:00.000Z"
+  "last_item": "2024-05-22T12:00:00.00000Z"
 }
 ```
 
@@ -141,8 +141,8 @@ Returns only the items added from the last date (for incremental updates).
 **Response:**
 ```json
 {
-  "from": "2024-05-01T00:00:00.000Z",
-  "to": "2024-05-22T12:00:00.000Z",
+  "from": "2024-05-01T00:00:00.00000Z",
+  "to": "2024-05-22T12:00:00.00000Z",
   "items": [
     { "name": "New Item 1", "icon": "icon_123" },
     { "name": "New Item 2", "icon": "icon_456" }
