@@ -141,4 +141,20 @@ export const itemController = {
 
     res.json(result);
   },
+
+  async getRecentItems(req: Request, res: Response, _: NextFunction) {
+    const limitParam = Math.floor(Number(req.query.limit));
+    const limit = isNaN(limitParam) || limitParam < 1
+      ? 10
+      : limitParam > 50
+        ? 50
+        : limitParam;
+
+    const result = await itemService.getRecentItems({ limit });
+    if (!result) {
+      return res.status(404).json({ error: "Items not found" });
+    }
+
+    res.json(result);
+  },
 };

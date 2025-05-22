@@ -21,4 +21,6 @@ itemRoutes.get("/item-id/:item_id/orderbook", itemDetailLimiter, asyncHandler(it
 itemRoutes.get("/class-id/:class_id/orderbook", itemDetailLimiter, asyncHandler(itemController.getItemOrderBookByClassId));
 itemRoutes.get("/name/:name/orderbook", itemDetailLimiter, asyncHandler(itemController.getItemOrderBookByName));
 
+itemRoutes.get("/recent", itemDetailLimiter, asyncHandler(itemController.getRecentItems));
+
 export default itemRoutes;

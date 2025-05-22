@@ -46,11 +46,40 @@ List all items, with pagination and optional search.
 
 ---
 
+#### **GET `/api/v1/items/recent`**
+
+List the most recently added items.
+
+**Query Parameters:**
+- `limit` (number, optional, default: 10, min: 1, max: 50) — number of recent items to return
+
+**Response:**
+```json
+{
+  "items": [
+    {
+      "name": "Item Name",
+      "item_id": 123456789,
+      "added_at": "2024-05-22T12:00:00.000Z",
+      "background_color": "000000",
+      "icon_url": "icon_id",
+      "class_id": 987654321,
+      "full_icon_url": "https://community.fastly.steamstatic.com/economy/image/icon_id"
+    }
+    // ...
+  ]
+}
+```
+
+---
+
 #### **GET `/api/v1/items/item-id/:item_id`**
 
 #### **GET `/api/v1/items/class-id/:class_id`**
 
 #### **GET `/api/v1/items/name/:name`**
+
+Get metadata for a specific item by its identifier.
 
 **Response:**
 ```json
@@ -136,7 +165,6 @@ Get the most recent order book (buy and sell orders, including cumulative quanti
 ```
 
 ---
-
 
 ### **Snapshots**
 

@@ -113,4 +113,15 @@ export const itemService = {
       buy_orders: buyOrders,
     };
   },
+
+  async getRecentItems({ limit = 10 }: { limit?: number }) {
+    const query = baseitemQuery()
+      .orderBy(desc(schema.item.added_at))
+      .limit(limit);
+
+    const items = await query;
+    if (!items) return null;
+
+    return items.map((item) => formatItemResponse(item));
+  },
 };
