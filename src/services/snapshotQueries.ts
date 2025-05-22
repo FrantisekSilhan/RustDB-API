@@ -1,5 +1,5 @@
 import { db, schema } from "@/db";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export const snapshotSelect = {
   snapshot_id: schema.itemSnapshot.snapshot_id,
@@ -54,7 +54,10 @@ export const getOrders = async (snapshot_id: number, orderType: "sell" | "buy") 
     .from(orderTable)
     .innerJoin(
       orderGraphTable,
-      eq(orderTable.snapshot_id, orderGraphTable.snapshot_id)
+      and(
+        eq(orderTable.snapshot_id, orderGraphTable.snapshot_id),
+        eq(orderTable.price, orderGraphTable.price),
+      ),
     )
     .where(eq(orderTable.snapshot_id, snapshot_id))
     .orderBy(orderTable.price);
