@@ -1,5 +1,5 @@
 import { db, schema } from "@/db";
-import { and, eq, desc } from "drizzle-orm";
+import { and, eq, desc, asc } from "drizzle-orm";
 
 export const snapshotSelect = {
   snapshot_id: schema.itemSnapshot.snapshot_id,
@@ -43,33 +43,27 @@ export const snapshotExists = async (snapshot_id: number): Promise<boolean> => {
 };
 
 export const getOrders = async (snapshot_id: number, orderType: "sell" | "buy") => {
-  const orderTable = orderType === "sell" ? schema.sellOrder : schema.buyOrder;
   const orderGraphTable = orderType === "sell" ? schema.sellOrderGraph : schema.buyOrderGraph;
 
   const orders = await db
     .select({
-      price: orderTable.price,
-      quantity: orderTable.quantity,
+      price: orderGraphTable.price,
       cumulative_quantity: orderGraphTable.cumulative_quantity,
     })
-    .from(orderTable)
-    .innerJoin(
-      orderGraphTable,
-      and(
-        eq(orderTable.snapshot_id, orderGraphTable.snapshot_id),
-        eq(orderTable.price, orderGraphTable.price),
-      ),
-    )
-    .where(eq(orderTable.snapshot_id, snapshot_id))
-    .orderBy(orderTable.price);
+    .from(orderGraphTable)
+    .where(eq(orderGraphTable.snapshot_id, snapshot_id))
+    .orderBy(asc(orderGraphTable.cumulative_quantity));
 
   if (orders.length === 0) return null;
 
-  const formattedOrders = orders.map((order) => ({
-    price: order.price,
-    quantity: order.quantity,
-    cumulative_quantity: order.cumulative_quantity,
-  }));
+  const formattedOrders = orders.map((order, index) => {
+    const quantity = index === 0 ? order.cumulative_quantity : order.cumulative_quantity - orders[index - 1].cumulative_quantity;
+    return {
+      price: order.price,
+      quantity,
+      cumulative_quantity: order.cumulative_quantity,
+    };
+  });
 
   return formattedOrders;
 };
