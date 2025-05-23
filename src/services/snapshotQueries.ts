@@ -1,5 +1,5 @@
 import { db, schema } from "@/db";
-import { and, eq } from "drizzle-orm";
+import { and, eq, desc } from "drizzle-orm";
 
 export const snapshotSelect = {
   snapshot_id: schema.itemSnapshot.snapshot_id,
@@ -19,6 +19,7 @@ export const baseSnapshotQuery = () => (db
     schema.itemMetadata,
     eq(schema.item.internal_id, schema.itemMetadata.item_internal_id)
   )
+  .orderBy(desc(schema.itemSnapshot.fetched_at))
   .$dynamic()
 );
 
