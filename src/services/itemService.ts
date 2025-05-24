@@ -2,7 +2,16 @@ import { db, schema } from "@/db";
 import { count, desc, eq, like, sql } from "drizzle-orm";
 import { formatItemResponse, getItem, baseitemQuery } from "./itemQueries";
 import { byClassId, byItemId, byName, withLike } from "@/utils/queries";
-import { baseSnapshotQuery, getOrders, getSnapshot } from "./snapshotQueries";
+import { getOrders } from "./snapshotQueries";
+
+export type SnapshotRow = {
+  id: number;
+  fetched_at: string;
+  total_sell_requests: number;
+  total_buy_requests: number;
+  lowest_sell_price: number | null;
+  highest_buy_price: number | null;
+};
 
 export const itemService = {
   async getAllItems({ page = 1, limit = 20, search }: {
@@ -56,13 +65,140 @@ export const itemService = {
   },
 
   async getItemSnapshotByClassId({ class_id }: { class_id: number }) {
-    return await getSnapshot(byClassId(baseSnapshotQuery(), class_id));
+    const result = (await db.execute<SnapshotRow>(sql`
+      WITH relevant_snapshots AS (
+        SELECT s.id, s.fetched_at, s.total_sell_requests, s.total_buy_requests
+        FROM item_snapshots s
+        JOIN items i ON s.item_internal_id = i.internal_id
+        JOIN item_metadata im ON i.internal_id = im.item_internal_id
+        WHERE im.class_id = ${class_id}
+      ),
+      lowest_sell_price AS (
+        SELECT item_snapshot_id, MIN(price)::INTEGER AS lowest_sell_price
+        FROM sell_order_graphs
+        WHERE item_snapshot_id IN (SELECT id FROM relevant_snapshots)
+        GROUP BY item_snapshot_id
+      ),
+      highest_buy_price AS (
+        SELECT item_snapshot_id, MAX(price)::INTEGER AS highest_buy_price
+        FROM buy_order_graphs
+        WHERE item_snapshot_id IN (SELECT id FROM relevant_snapshots)
+        GROUP BY item_snapshot_id
+      )
+      SELECT
+        rs.id,
+        rs.fetched_at,
+        rs.total_sell_requests,
+        rs.total_buy_requests,
+        lsp.lowest_sell_price,
+        hbp.highest_buy_price
+      FROM relevant_snapshots rs
+      LEFT JOIN lowest_sell_price lsp ON rs.id = lsp.item_snapshot_id
+      LEFT JOIN highest_buy_price hbp ON rs.id = hbp.item_snapshot_id
+      ORDER BY rs.fetched_at DESC
+      LIMIT 1;
+    `)).rows[0];
+
+    if (!result) return null;
+
+    return {
+      snapshot_id: result.id,
+      fetched_at: result.fetched_at,
+      total_sell_requests: result.total_sell_requests,
+      total_buy_requests: result.total_buy_requests,
+      lowest_sell_price: result.lowest_sell_price,
+      highest_buy_price: result.highest_buy_price,
+    };
   },
   async getItemSnapshotById({ item_id }: { item_id: number }) {
-    return await getSnapshot(byItemId(baseSnapshotQuery(), item_id));
+    const result = (await db.execute<SnapshotRow>(sql`
+      WITH relevant_snapshots AS (
+        SELECT s.id, s.fetched_at, s.total_sell_requests, s.total_buy_requests
+        FROM item_snapshots s
+        JOIN items i ON s.item_internal_id = i.internal_id
+        WHERE i.item_id = ${item_id}
+      ),
+      lowest_sell_price AS (
+        SELECT item_snapshot_id, MIN(price)::INTEGER AS lowest_sell_price
+        FROM sell_order_graphs
+        WHERE item_snapshot_id IN (SELECT id FROM relevant_snapshots)
+        GROUP BY item_snapshot_id
+      ),
+      highest_buy_price AS (
+        SELECT item_snapshot_id, MAX(price)::INTEGER AS highest_buy_price
+        FROM buy_order_graphs
+        WHERE item_snapshot_id IN (SELECT id FROM relevant_snapshots)
+        GROUP BY item_snapshot_id
+      )
+      SELECT
+        rs.id,
+        rs.fetched_at,
+        rs.total_sell_requests,
+        rs.total_buy_requests,
+        lsp.lowest_sell_price,
+        hbp.highest_buy_price
+      FROM relevant_snapshots rs
+      LEFT JOIN lowest_sell_price lsp ON rs.id = lsp.item_snapshot_id
+      LEFT JOIN highest_buy_price hbp ON rs.id = hbp.item_snapshot_id
+      ORDER BY rs.fetched_at DESC
+      LIMIT 1;
+    `)).rows[0];
+
+    if (!result) return null;
+
+    return {
+      snapshot_id: result.id,
+      fetched_at: result.fetched_at,
+      total_sell_requests: result.total_sell_requests,
+      total_buy_requests: result.total_buy_requests,
+      lowest_sell_price: result.lowest_sell_price,
+      highest_buy_price: result.highest_buy_price,
+    };
   },
   async getItemSnapshotByName({ name }: { name: string }) {
-    return await getSnapshot(byName(baseSnapshotQuery(), name));
+    const result = (await db.execute<SnapshotRow>(sql`
+      WITH relevant_snapshots AS (
+        SELECT s.id, s.fetched_at, s.total_sell_requests, s.total_buy_requests
+        FROM item_snapshots s
+        JOIN items i ON s.item_internal_id = i.internal_id
+        WHERE LOWER(i.name) = LOWER(${name})
+      ),
+      lowest_sell_price AS (
+        SELECT item_snapshot_id, MIN(price)::INTEGER AS lowest_sell_price
+        FROM sell_order_graphs
+        WHERE item_snapshot_id IN (SELECT id FROM relevant_snapshots)
+        GROUP BY item_snapshot_id
+      ),
+      highest_buy_price AS (
+        SELECT item_snapshot_id, MAX(price)::INTEGER AS highest_buy_price
+        FROM buy_order_graphs
+        WHERE item_snapshot_id IN (SELECT id FROM relevant_snapshots)
+        GROUP BY item_snapshot_id
+      )
+      SELECT
+        rs.id,
+        rs.fetched_at,
+        rs.total_sell_requests,
+        rs.total_buy_requests,
+        lsp.lowest_sell_price,
+        hbp.highest_buy_price
+      FROM relevant_snapshots rs
+      LEFT JOIN lowest_sell_price lsp ON rs.id = lsp.item_snapshot_id
+      LEFT JOIN highest_buy_price hbp ON rs.id = hbp.item_snapshot_id
+      ORDER BY rs.fetched_at DESC
+      LIMIT 1;
+    `)).rows[0];
+
+    if (!result) return null;
+
+    return {
+      snapshot_id: result.id,
+      fetched_at: result.fetched_at,
+      total_sell_requests: result.total_sell_requests,
+      total_buy_requests: result.total_buy_requests,
+      lowest_sell_price: result.lowest_sell_price,
+      highest_buy_price: result.highest_buy_price,
+    };
   },
 
   async getItemOrderBookByClassId({ class_id }: { class_id: number }) {
