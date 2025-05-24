@@ -265,6 +265,26 @@ Get the order book (buy and sell orders) for a specific snapshot.
 
 ---
 
+## Database Indexes
+
+```sql
+CREATE INDEX IF NOT EXISTS idx_items_lower_name ON items (LOWER(name));
+CREATE INDEX IF NOT EXISTS idx_sell_order_graphs_snapshot_id_desc ON sell_order_graphs (item_snapshot_id DESC);
+CREATE INDEX IF NOT EXISTS idx_buy_order_graphs_snapshot_id_desc ON buy_order_graphs (item_snapshot_id DESC);
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX IF NOT EXISTS idx_items_name_trgm ON items USING gin (LOWER(name) gin_trgm_ops);
+
+CREATE INDEX IF NOT EXISTS idx_item_metadata_class_id ON item_metadata (class_id);
+CREATE INDEX IF NOT EXISTS idx_items_item_id ON items (item_id);
+CREATE INDEX IF NOT EXISTS idx_item_snapshots_id ON item_snapshots (id);
+
+CREATE INDEX IF NOT EXISTS idx_sell_order_graphs_item_snapshot_id_price ON sell_order_graphs (item_snapshot_id, price);
+CREATE INDEX IF NOT EXISTS idx_buy_order_graphs_item_snapshot_id_price ON buy_order_graphs (item_snapshot_id, price);
+```
+
+--
+
 ## **ID Reference**
 
 - **item_id**: Steam's unique item ID (requires scraping to obtain from Steam)
