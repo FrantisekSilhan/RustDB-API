@@ -4,7 +4,7 @@ import { eq, desc, asc, sql } from "drizzle-orm";
 const lowestSellPrice = db
   .select({
     snapshot_id: schema.sellOrderGraph.snapshot_id,
-    lowest_sell_price: sql<number | null>`MIN(${schema.sellOrderGraph.price})::BIGINT`.as("lowest_sell_price"),
+    lowest_sell_price: sql<number | null>`MIN(${schema.sellOrderGraph.price})::INTEGER`.as("lowest_sell_price"),
   })
   .from(schema.sellOrderGraph)
   .groupBy(schema.sellOrderGraph.snapshot_id)
@@ -13,7 +13,7 @@ const lowestSellPrice = db
 const highestBuyPrice = db
   .select({
     snapshot_id: schema.buyOrderGraph.snapshot_id,
-    highest_buy_price: sql<number | null>`MAX(${schema.buyOrderGraph.price})::BIGINT`.as("highest_buy_price"),
+    highest_buy_price: sql<number | null>`MAX(${schema.buyOrderGraph.price})::INTEGER`.as("highest_buy_price"),
   })
   .from(schema.buyOrderGraph)
   .groupBy(schema.buyOrderGraph.snapshot_id)

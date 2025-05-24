@@ -1,5 +1,5 @@
 import { db, schema } from "@/db";
-import { count, desc, eq, gt, like, sql } from "drizzle-orm";
+import { count, desc, eq, like, sql } from "drizzle-orm";
 import { formatItemResponse, getItem, baseitemQuery } from "./itemQueries";
 import { byClassId, byItemId, byName, withLike } from "@/utils/queries";
 import { baseSnapshotQuery, getOrders, getSnapshot } from "./snapshotQueries";
@@ -140,7 +140,7 @@ export const itemService = {
 
     const lastItem = (await db
       .select({
-        added_at: sql`added_at::text`,
+        added_at: sql<string>`added_at::text`,
       })
       .from(schema.item)
       .orderBy(desc(schema.item.added_at))
@@ -160,7 +160,7 @@ export const itemService = {
   async getItemsMinimalLast() {
     const lastItem = (await db
       .select({
-        added_at: sql`added_at::text`,
+        added_at: sql<string>`added_at::text`,
       })
       .from(schema.item)
       .orderBy(desc(schema.item.added_at))
@@ -191,7 +191,7 @@ export const itemService = {
 
     const lastItem = (await db
       .select({
-        added_at: sql`added_at::text`,
+        added_at: sql<string>`added_at::text`,
       })
       .from(schema.item)
       .orderBy(desc(schema.item.added_at))
