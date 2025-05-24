@@ -1,11 +1,31 @@
 import { db, schema } from "@/db";
-import { and, eq, desc, asc } from "drizzle-orm";
+import { eq, desc, asc, sql } from "drizzle-orm";
+
+const lowestSellPrice = db
+  .select({
+    snapshot_id: schema.sellOrderGraph.snapshot_id,
+    lowest_sell_price: sql<number | null>`MIN(${schema.sellOrderGraph.price})`.as("lowest_sell_price"),
+  })
+  .from(schema.sellOrderGraph)
+  .groupBy(schema.sellOrderGraph.snapshot_id)
+  .as("lowestSellPrice");
+
+const highestBuyPrice = db
+  .select({
+    snapshot_id: schema.buyOrderGraph.snapshot_id,
+    highest_buy_price: sql<number | null>`MAX(${schema.buyOrderGraph.price})`.as("highest_buy_price"),
+  })
+  .from(schema.buyOrderGraph)
+  .groupBy(schema.buyOrderGraph.snapshot_id)
+  .as("highestBuyPrice");
 
 export const snapshotSelect = {
   snapshot_id: schema.itemSnapshot.snapshot_id,
   fetched_at: schema.itemSnapshot.fetched_at,
   total_sell_requests: schema.itemSnapshot.total_sell_requests,
   total_buy_requests: schema.itemSnapshot.total_buy_requests,
+  lowest_sell_price: lowestSellPrice.lowest_sell_price,
+  highest_buy_price: highestBuyPrice.highest_buy_price,
 };
 
 export const baseSnapshotQuery = () => (db
@@ -18,6 +38,14 @@ export const baseSnapshotQuery = () => (db
   .innerJoin(
     schema.itemMetadata,
     eq(schema.item.internal_id, schema.itemMetadata.item_internal_id)
+  )
+  .leftJoin(
+    lowestSellPrice,
+    eq(schema.itemSnapshot.snapshot_id, lowestSellPrice.snapshot_id)
+  )
+  .leftJoin(
+    highestBuyPrice,
+    eq(schema.itemSnapshot.snapshot_id, highestBuyPrice.snapshot_id)
   )
   .orderBy(desc(schema.itemSnapshot.fetched_at))
   .$dynamic()

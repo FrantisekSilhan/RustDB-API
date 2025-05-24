@@ -169,7 +169,9 @@ Get the most recent snapshot metadata for an item by any of its identifiers.
   "snapshot_id": 123,
   "fetched_at": "2024-05-22T12:00:00.000Z",
   "total_sell_requests": 19,
-  "total_buy_requests": 274
+  "total_buy_requests": 274,
+  "lowest_sell_price": 654,
+  "highest_buy_price": 456
 }
 ```
 
