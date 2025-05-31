@@ -4,6 +4,8 @@ import helmet from "helmet";
 import itemRoutes from "./routes/itemRoutes";
 import snapshotRoutes from "./routes/snapshotRoutes";
 
+import "./setup";
+
 const app = express();
 
 app.set("trust proxy", 1);
