@@ -3,7 +3,7 @@
 **RustDB-API** is a public API for accessing Rust item data, powered by the [RustDB](https://github.com/FrantisekSilhan/RustDB) backend.  
 It provides endpoints for item metadata, order books, price history, and more.
 
-**Live API:** [https://api.watercollector.icu/](https://api.watercollector.icu/)
+**Live API:** [https://api.rustdb.dev.pvq.cz/](https://api.rustdb.dev.pvq.cz/)
 
 ## Features
 
